@@ -1,49 +1,69 @@
-const todoBtn = document.querySelector("#todo-btn")
 
-let time = `${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
-    let obj = {
-        id:1,
-        name: "najot ta'lim",
-        time: time,
+    const addBtn = document.querySelector(("#add-btn"));
+    const showBtn = document.querySelector(("#show-btn"));
+    const todoWrap = document.querySelector(("#todoWrap"));
+    const delBtn = document.querySelector(("#delete-btn"))
+    
+    
+    // ADD TODO FUNCTION 
+    const RESULT_ADD_TODO = JSON.parse(localStorage.getItem("todoResult")) || [];
+
+    function NewTodo(todoName, hour, minut, second) {
+        this.id = String(RESULT_ADD_TODO.length + 1).padStart(5,"0")
+        this.name = todoName;
+        this.hour = hour.toString().padStart(2,"0");
+        this.minut = minut.toString().padStart(2,"0");
+        this.second = second.toString().padStart(2,"0");
     }
-    let list = [obj]
-    localStorage.setItem("list",JSON.stringify(list))
+    
+   function addTodo() {
+        let todoName = prompt("Enter a todoName");
+        if (todoName !== "") {
+            let hour = new Date().getHours();
+        let minut = new Date().getMinutes();
+        let second = new Date().getSeconds();
 
-    todoBtn.addEventListener("click", () =>{
-        alert("Add new todo");
-        let objInLs = JSON.parse(localStorage.getItem("list"))
-        let name = prompt("Enter todo name");
-        let newObj = {
-            id: 1,
-            name: name,
-            time: time
+       
+        let resNewTodo = new NewTodo(todoName, hour, minut, second);
+        RESULT_ADD_TODO.push(resNewTodo)
+        console.log(RESULT_ADD_TODO)
+        localStorage.setItem("todoResult" , JSON.stringify(RESULT_ADD_TODO));
+
+        }
+        else{
+            alert("Enter todoName")
+        }
+        
+   }
+
+   //  ........ showTodo function .........
+    const showTodo = function () {
+        todoWrap.innerHTML=""
+       RESULT_ADD_TODO.forEach(n => {
+        todoWrap.innerHTML += `
+       <div class="todo-list" >
+            <h2>${n.id}</h2>
+            <h2>${n.name}</h2>
+          
+            <span>${n.hour} : ${n.minut} : ${n.second}</span>
+       </div>
+        `
+       });
+    }
+
+    const delTodo = function(){
+        let delName = prompt("Enter a delete todoname")
+       
+        if (delName) {
+            let delElement = RESULT_ADD_TODO.filter(element => element.id !== delName);
+            
+            localStorage.setItem("todoResult", JSON.stringify(delElement))
         }
       
-    
-      objInLs.push(newObj)
-      console.log(objInLs)
-
-    //  localStorage.setItem(JSON.stringify(objInLs))
-
-    })
+    }
 
 
-
-// let objTodo = {
-//     name: "Najot ta'lim",
-//     time: time
-// }
-// let list = [objTodo]
-// localStorage.setItem("list", JSON.stringify(list))
-
-// todoBtn.addEventListener("click",() => {
-//     let todo = prompt("TODO kiriting");
-//    let  newObjTodo = {
-//         name: todo,
-//         time: time
-//     }
-// })
-
-// let newTodo = JSON.parse(localStorage.getItem(list))
-// list.push(newObjTodo)
-// localStorage.setItem(JSON.stringify("list", newTodo))
+    // ADD TODO EVENT
+    addBtn.addEventListener("click", addTodo);
+    showBtn.addEventListener("click", showTodo);
+    delBtn.addEventListener("click", delTodo )
